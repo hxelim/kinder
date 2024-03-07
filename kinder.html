@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>경기도 유치원 현황</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    * {margin: 0; padding: 0;}
+    body {background-color:rgba(250, 250, 210, 0.5);}
+    table { width: 100%;}
+    td:nth-of-type(1) {width: 10%; text-align: center; }
+    td:nth-of-type(3) {width: 15%;}
+    td:nth-of-type(5) {width: 6%;}
+    td {margin: 10px; height: 30px;}
+    tr:nth-child(2n-1) {background-color:  lightgoldenrodyellow;}
+
+    input {background-color: rgb(255, 215, 0,0.5); border: none; width: 50%; height: 50px; margin: 10px; font-size: 20px; text-align: center; border-radius: 20px;} 
+
+  </style>
+</head>
+
+<body>
+  <input type="text" id="myInput" placeholder=" Search..">
+  <div class="wrap"></div>
+
+  <script>
+    $.ajax({
+      method: "GET",
+      url: "https://openapi.gg.go.kr/Kndrgrschoolstus?key=43bb0943610840fc93820e76b4ff0cd3&Type=json&pIndex=1&pSize=1000"
+    })
+
+      .done(function (msg) {
+        msg = JSON.parse(msg);
+        console.log(msg.Kndrgrschoolstus[1].row)
+        msg = msg.Kndrgrschoolstus[1].row;
+        
+        if (msg.length > 0) {
+          let tb = $('<table/>');
+
+          for (var i in msg) {
+
+            let $FNDN_TYPE = msg[i].FNDN_TYPE;
+            let $KDGT_NM = msg[i].KDGT_NM;
+            let $TELNO = msg[i].TELNO;
+            let $REFINE_LOTNO_ADDR = msg[i].REFINE_LOTNO_ADDR;
+            let $REFINE_ZIPNO = msg[i].REFINE_ZIPNO;
+            let row = $("<tr/>").append(
+
+              $("<td/>").text($FNDN_TYPE),
+              $("<td/>").text($KDGT_NM),
+              $("<td/>").text($TELNO),
+              $("<td/>").text($REFINE_LOTNO_ADDR),
+              $("<td/>").text($REFINE_ZIPNO),
+            );
+            tb.append(row);
+          }
+          $('.wrap').append(tb)
+        }
+      });
+
+    $('#myInput').on("keyup", function () {
+      let value = $(this).val();
+      $('.wrap tr').filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      })
+    })
+  </script>
+
+</body>
+
+</html>
